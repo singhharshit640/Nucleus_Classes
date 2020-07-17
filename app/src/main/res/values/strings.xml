@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Nucleus Classes</string>
+
+    <string-array name="batch">
+        <item>B1</item>
+        <item>B2</item>
+    </string-array>
+
+</resources>
