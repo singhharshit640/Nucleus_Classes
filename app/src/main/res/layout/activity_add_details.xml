@@ -52,17 +52,20 @@
                     android:inputType="textEmailAddress" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <TextView
-                android:id="@+id/etEmailDetail"
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Email"
-                android:layout_marginTop="10dp"
-                android:fontFamily="@font/poppinsmedium"
-                android:layout_marginLeft="10dp"
+                android:hint="Email provided by Nuclues Classes"
                 android:layout_marginRight="10dp"
-                android:textColor="#000"
-                android:textSize="20sp"/>
+                android:layout_marginLeft="10dp"
+                android:layout_height="wrap_content">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etEmailDetail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppinsmedium"
+                    android:inputType="textEmailAddress" />
+            </com.google.android.material.textfield.TextInputLayout>
 
 
             <LinearLayout
@@ -81,12 +84,11 @@
                     android:textColor="#000"
                     android:fontFamily="@font/poppinsmedium"/>
 
-                <Spinner
-                    android:id="@+id/spBatch"
+                <TextView
+                    android:id="@+id/tvBatch"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginLeft="10dp"
-                    android:entries="@array/batch"/>
+                    android:layout_marginLeft="10dp"/>
 
 
             </LinearLayout>

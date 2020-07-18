@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "611737930668",
+    "firebase_url": "https://nucleus-classes.firebaseio.com",
+    "project_id": "nucleus-classes",
+    "storage_bucket": "nucleus-classes.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:611737930668:android:5786088cf32b84bc75c809",
+        "android_client_info": {
+          "package_name": "com.sleepingpandaaa.nucleusclasses"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "611737930668-srdeqp972nqhn851quamsvnm1t9scg2o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAJ-NtHzDmAFKplfxpSTD0F8MNEWjIDP_g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "611737930668-srdeqp972nqhn851quamsvnm1t9scg2o.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

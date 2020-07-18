@@ -1,5 +1,6 @@
 package com.sleepingpandaaa.nucleusclasses;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
@@ -10,15 +11,18 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class StartActivity extends AppCompatActivity {
 
-    TextInputEditText etUsername, etPassword;
-    TextView tvSignIn, tvSignUp;
-    String username;
-    ProgressDialog loadingBar;
-    DatabaseHelper helper = new DatabaseHelper(this);
+    private TextInputEditText etUsername, etPassword;
+    private TextView tvSignIn;
+    private FirebaseAuth mAuth;
+    private ProgressDialog loadingBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,61 +47,44 @@ public class StartActivity extends AppCompatActivity {
                 }
                 else {
 
-                    username = userName;
-
                     loadingBar.setTitle("Signing you in");
                     loadingBar.setMessage("Please wait, while we sign you in...");
                     loadingBar.setCanceledOnTouchOutside(false);
                     loadingBar.show();
 
-                    String password = helper.searchPass(userName);
-                    if (userPassword.equals(password))
-                    {
-                        SendUserToDashboardActivity(userName);
-                        etUsername.setText("");
-                        etPassword.setText("");
-                        loadingBar.dismiss();
-                    }
-                    else {
-                        Toast.makeText(StartActivity.this, "Credentials don't match or Account not found", Toast.LENGTH_SHORT).show();
-                        loadingBar.dismiss();
-                    }
+                    mAuth.signInWithEmailAndPassword(userName, userPassword).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful())
+                        {
+                            loadingBar.dismiss();
+                            SendUserToDashboardActivity();
+                        }
+                        else {
+                            String message = task.getException().toString();
+                            loadingBar.dismiss();
+                            Toast.makeText(StartActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
+                        }
+                        }
+                    });
                     
                 }
 
             }
         });
 
-        tvSignUp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                SendUserToSignUpActivity();
-
-            }
-        });
 
 
     }
 
-    private void SendUserToSignUpActivity()
-    {
 
-        Intent signupIntent = new Intent(StartActivity.this, SignUpActivity.class);
-        startActivity(signupIntent);
-
-    }
-
-    private void SendUserToDashboardActivity(String userName)
+    private void SendUserToDashboardActivity()
     {
 
         Intent loginIntent = new Intent(StartActivity.this, DashBoardActivity.class);
-        loginIntent.putExtra("username", username);
         loginIntent.addFlags(loginIntent.FLAG_ACTIVITY_CLEAR_TOP | loginIntent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(loginIntent);
         finish();
-        loadingBar.dismiss();
-
     }
 
     private void InitializeFields() {
@@ -105,8 +92,7 @@ public class StartActivity extends AppCompatActivity {
         etUsername = findViewById(R.id.etUsername);
         etPassword = findViewById(R.id.etPassword);
         tvSignIn = findViewById(R.id.tvSignIn);
+        mAuth = FirebaseAuth.getInstance();
         loadingBar = new ProgressDialog(this);
-        tvSignUp = findViewById(R.id.tvSignUp);
-
     }
 }
