@@ -36,7 +36,7 @@ public class LecturesActivity extends AppCompatActivity {
     private String currentUserId, Batch ="", Batch1, FinalBatch;
     private String b1="B1", b2="B2", b1Link = "", b2Link= "", id, videoId;
     private ProgressDialog loadingBar;
-    private TextView tvPlay;
+    private TextView tvBackToDashboard;
     private boolean alreadyExecuted = false;
     private boolean alreadyExecuted1 = false;
     private boolean alreadyExecuted2 = false;
@@ -57,13 +57,27 @@ public class LecturesActivity extends AppCompatActivity {
 
         InitializeFields();
 
-        youTubePlayerView.addYouTubePlayerListener(new AbstractYouTubePlayerListener() {
-            @Override
-            public void onReady(@NonNull YouTubePlayer youTubePlayer) {
-                String videoId1 = videoId;
-                youTubePlayer.loadVideo(videoId1, 0);
-            }
-        });
+            youTubePlayerView.addYouTubePlayerListener(new AbstractYouTubePlayerListener() {
+                @Override
+                public void onReady(@NonNull YouTubePlayer youTubePlayer) {
+                    String videoId1 = videoId;
+                    if (videoId1.equals(null))
+                    {
+                        youTubePlayer.loadVideo("S0Q4gqBUs7c",0);
+                    }
+                    else {
+                        youTubePlayer.loadVideo(videoId1, 0);
+                    }
+                }
+            });
+
+            tvBackToDashboard.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    startActivity(new Intent(LecturesActivity.this, DashBoardActivity.class));
+                }
+            });
+
 
 //        onInitializedListener = new com.google.android.youtube.player.YouTubePlayer.OnInitializedListener() {
 //            @Override
@@ -116,6 +130,7 @@ public class LecturesActivity extends AppCompatActivity {
                 else {
                     Toast.makeText(LecturesActivity.this, "Please fill your details first!", Toast.LENGTH_SHORT).show();
                     loadingBar.dismiss();
+                    startActivity(new Intent(LecturesActivity.this, DashBoardActivity.class));
                 }
 
             }
@@ -193,7 +208,7 @@ public class LecturesActivity extends AppCompatActivity {
 
         else {
             Toast.makeText(this, "Please fill your details first!", Toast.LENGTH_LONG).show();
-            //startActivity(new Intent(LecturesActivity.this, DashBoardActivity.class));
+            startActivity(new Intent(LecturesActivity.this, DashBoardActivity.class));
         }
 
 
@@ -227,6 +242,7 @@ public class LecturesActivity extends AppCompatActivity {
 
         youTubePlayerView = findViewById(R.id.youtube_player_view);
         getLifecycle().addObserver(youTubePlayerView);
+        tvBackToDashboard = findViewById(R.id.tvBackToDashboard);
         loadingBar = new ProgressDialog(this);
         mAuth = FirebaseAuth.getInstance();
         currentUserId = mAuth.getCurrentUser().getUid();

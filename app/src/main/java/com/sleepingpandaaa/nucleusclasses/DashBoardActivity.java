@@ -82,8 +82,26 @@ public class DashBoardActivity extends AppCompatActivity {
         ivLectures.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(DashBoardActivity.this, LecturesActivity.class);
-                startActivity(intent);
+                RootRef.child("UserInfo").child(currentUserId).addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.child("userFullName").exists() && snapshot.child("userBatch").exists()
+                         && snapshot.child("userEmail").exists() && snapshot.child("userName").exists())
+                        {
+                            Intent intent = new Intent(DashBoardActivity.this, LecturesActivity.class);
+                            startActivity(intent);
+                        }
+                        else {
+                            Toast.makeText(DashBoardActivity.this, "Lectures can't be accessed until you fill your details..", Toast.LENGTH_LONG).show();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+
             }
         });
 
