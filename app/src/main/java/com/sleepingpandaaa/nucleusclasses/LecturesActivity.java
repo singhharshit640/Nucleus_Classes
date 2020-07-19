@@ -29,7 +29,7 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTube
 
 import java.util.HashMap;
 
-public class LecturesActivity extends YouTubeBaseActivity {
+public class LecturesActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private DatabaseReference userBatchRef, RootRefB1, RootRefB2, UserInfoRef;
@@ -37,8 +37,13 @@ public class LecturesActivity extends YouTubeBaseActivity {
     private String b1="B1", b2="B2", b1Link = "", b2Link= "", id, videoId;
     private ProgressDialog loadingBar;
     private TextView tvPlay;
-    private com.google.android.youtube.player.YouTubePlayerView youTubePlayerView;
-    private com.google.android.youtube.player.YouTubePlayer.OnInitializedListener onInitializedListener;
+    private boolean alreadyExecuted = false;
+    private boolean alreadyExecuted1 = false;
+    private boolean alreadyExecuted2 = false;
+    YouTubePlayerView youTubePlayerView;
+//    private com.google.android.youtube.player.YouTubePlayerView youTubePlayerView;
+//    private com.google.android.youtube.player.YouTubePlayer.OnInitializedListener onInitializedListener;
+
 
     public void getVideoId(String id)
     {
@@ -52,26 +57,33 @@ public class LecturesActivity extends YouTubeBaseActivity {
 
         InitializeFields();
 
-
-        onInitializedListener = new com.google.android.youtube.player.YouTubePlayer.OnInitializedListener() {
+        youTubePlayerView.addYouTubePlayerListener(new AbstractYouTubePlayerListener() {
             @Override
-            public void onInitializationSuccess(com.google.android.youtube.player.YouTubePlayer.Provider provider, com.google.android.youtube.player.YouTubePlayer youTubePlayer, boolean b) {
-                youTubePlayer.loadVideo(videoId);
-                loadingBar.dismiss();
-            }
-
-            @Override
-            public void onInitializationFailure(com.google.android.youtube.player.YouTubePlayer.Provider provider, YouTubeInitializationResult youTubeInitializationResult) {
-
-            }
-        };
-
-        tvPlay.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                youTubePlayerView.initialize(PlayerConfig.API_KEY, onInitializedListener);
+            public void onReady(@NonNull YouTubePlayer youTubePlayer) {
+                String videoId1 = videoId;
+                youTubePlayer.loadVideo(videoId1, 0);
             }
         });
+
+//        onInitializedListener = new com.google.android.youtube.player.YouTubePlayer.OnInitializedListener() {
+//            @Override
+//            public void onInitializationSuccess(com.google.android.youtube.player.YouTubePlayer.Provider provider, com.google.android.youtube.player.YouTubePlayer youTubePlayer, boolean b) {
+//                youTubePlayer.loadVideo(videoId);
+//                loadingBar.dismiss();
+//            }
+//
+//            @Override
+//            public void onInitializationFailure(com.google.android.youtube.player.YouTubePlayer.Provider provider, YouTubeInitializationResult youTubeInitializationResult) {
+//
+//            }
+//        };
+//
+//        tvPlay.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                youTubePlayerView.initialize(PlayerConfig.API_KEY, onInitializedListener);
+//            }
+//        });
 
 
         loadingBar.setTitle("Getting your lecture");
@@ -82,7 +94,12 @@ public class LecturesActivity extends YouTubeBaseActivity {
         b1Link = "KVEetswpWpk";
         b2Link = "ZihywtixUYo";
 
-        InsertVideoId();
+        if (!alreadyExecuted)
+        {
+            InsertVideoId();
+            alreadyExecuted = true;
+        }
+
 
         UserInfoRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -115,58 +132,65 @@ public class LecturesActivity extends YouTubeBaseActivity {
         Batch1 = batch;
         Log.d("Batch1", "sendBatchToPlayVideo: " + Batch1);
         Toast.makeText(this, "Batch: " + Batch1, Toast.LENGTH_SHORT).show();
-        playVideo(Batch1);
+        if(!alreadyExecuted1)
+        {
+            getVideo(Batch1);
+            alreadyExecuted1 = true;
+        }
+
     }
 
-    private void playVideo(String batch1)
+    private void getVideo(String batch1)
     {
 
         FinalBatch = batch1;
 
         if (FinalBatch.equals(b1))
         {
-            RootRefB1.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    if (snapshot.exists())
-                    {
-                        id = snapshot.child("B1_Link").getValue().toString();
-                        getVideoId(id);
+                RootRefB1.child("B1_Link").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists())
+                        {
+                            id = snapshot.getValue().toString();
+                            getVideoId(id);
+                        }
+                        else {
+                            Toast.makeText(LecturesActivity.this, "Error!", Toast.LENGTH_SHORT).show();
+                        }
                     }
-                    else {
-                        Toast.makeText(LecturesActivity.this, "Error!", Toast.LENGTH_SHORT).show();
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
                     }
-                }
+                });
+            }
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-
-                }
-            });
-        }
 
         else if(FinalBatch.equals(b2))
         {
-            RootRefB2.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    if (snapshot.exists())
-                    {
-                        id = snapshot.child("B2_Link").getValue().toString();
-                        getVideoId(id);
+                RootRefB2.child("B2_Link").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists())
+                        {
+                            id = snapshot.getValue().toString();
+                            getVideoId(id);
+                        }
+                        else {
+                            Toast.makeText(LecturesActivity.this, "Error!", Toast.LENGTH_SHORT).show();
+                        }
                     }
-                    else {
-                        Toast.makeText(LecturesActivity.this, "Error!", Toast.LENGTH_SHORT).show();
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
                     }
-                }
+                });
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
+            }
 
-                }
-            });
-
-        }
         else {
             Toast.makeText(this, "Please fill your details first!", Toast.LENGTH_LONG).show();
             //startActivity(new Intent(LecturesActivity.this, DashBoardActivity.class));
@@ -197,9 +221,12 @@ public class LecturesActivity extends YouTubeBaseActivity {
 
     private void InitializeFields()
     {
-        youTubePlayerView = findViewById(R.id.youtube_player);
+        //youTubePlayerView = findViewById(R.id.youtube_player);
 
-        tvPlay = findViewById(R.id.tvPlay);
+        //tvPlay = findViewById(R.id.tvPlay);
+
+        youTubePlayerView = findViewById(R.id.youtube_player_view);
+        getLifecycle().addObserver(youTubePlayerView);
         loadingBar = new ProgressDialog(this);
         mAuth = FirebaseAuth.getInstance();
         currentUserId = mAuth.getCurrentUser().getUid();
